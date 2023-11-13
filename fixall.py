@@ -5,27 +5,110 @@ from rich.progress import Progress, BarColumn, TextColumn
 from rich.table import Table
 from rich.panel import Panel
 
-def simulate_process_monitoring(console, num_processes=5):
-    """Simulates a process monitoring display similar to htop."""
-    table = Table(title="Process Monitoring", style="bold blue")
-    table.add_column("PID", style="dim", width=6)
-    table.add_column("User")
-    table.add_column("CPU%", justify="right")
-    table.add_column("MEM%", justify="right")
-    table.add_column("Command")
+# Define specific errors and warnings for each task
+task_specific_messages = {
+    "Initializing fixall.nothings": {
+        "errors": [
+            "Failed to initialize module", 
+            "Configuration mismatch detected", 
+            "Module not found",
+            "Initialization script error", 
+            "Missing essential files"
+        ],
+        "warnings": [
+            "Initialization delay", 
+            "Skipping optional configurations",
+            "Deprecated module detected",
+            "Update available for components",
+            "Running in compatibility mode"
+        ]
+    },
+    "Fixing printers": {
+        "errors": [
+            "Printer driver conflict", 
+            "Network printer not found",
+            "Incompatible printer firmware", 
+            "Print spooler error", 
+            "Unauthorized access attempt"
+        ],
+        "warnings": [
+            "Low ink warning", 
+            "Paper jam detected",
+            "Printer offline",
+            "Maintenance required",
+            "High print queue"
+        ]
+    },
+    "Resolving network issues": {
+        "errors": [
+            "Network timeout", 
+            "Router configuration error",
+            "DNS resolution failure", 
+            "IP conflict detected", 
+            "VPN connection failed"
+        ],
+        "warnings": [
+            "Intermittent connectivity", 
+            "Low signal strength",
+            "Network congestion",
+            "Limited bandwidth",
+            "Unsecured Wi-Fi detected"
+        ]
+    },
+    "Updating user permissions": {
+        "errors": [
+            "Permission write failure", 
+            "User group not found",
+            "Invalid user credentials", 
+            "Database access denied", 
+            "LDAP server unresponsive"
+        ],
+        "warnings": [
+            "Incomplete user data", 
+            "Redundant permission settings",
+            "Password expiration approaching",
+            "Account inactivity warning",
+            "Excessive login attempts"
+        ]
+    },
+    "Optimizing system performance": {
+        "errors": [
+            "Performance tuning failed", 
+            "Resource allocation error",
+            "Critical process terminated", 
+            "Overclocking failed", 
+            "Hardware compatibility issue"
+        ],
+        "warnings": [
+            "Memory usage high", 
+            "System optimization delayed",
+            "Background services consuming resources",
+            "Possible malware detected",
+            "System restore point not set"
+        ]
+    },
+    "Finalizing fixes": {
+        "errors": [
+            "Finalization script missing", 
+            "Insufficient privileges for finalization",
+            "System lockdown in progress", 
+            "Critical error on shutdown", 
+            "License verification failed"
+        ],
+        "warnings": [
+            "Extended finalization time", 
+            "Skipping non-critical steps",
+            "Temporary files not cleaned up",
+            "Registry modifications pending",
+            "Pending system reboot"
+        ]
+    }
+    # Add other tasks as necessary...
+}
 
-    for _ in range(num_processes):
-        pid = str(random.randint(1000, 50000))
-        user = random.choice(["root", "user1", "user2", "daemon"])
-        cpu_usage = f"{random.uniform(0.1, 30.0):.1f}"
-        mem_usage = f"{random.uniform(0.1, 50.0):.1f}"
-        command = random.choice(["python", "bash", "htop", "curl", "ssh"])
-        table.add_row(pid, user, cpu_usage, mem_usage, command)
-
-    console.print(table)
-
-def simulate_resolution_progress(progress, task_name, sub_task_name, duration=2):
+def simulate_resolution_progress(progress, task_name, sub_task_name, message, duration=2):
     """Simulates a sub-task resolution with a progress bar."""
+    progress.console.log(f"[yellow]{message}")
     sub_task = progress.add_task(sub_task_name, total=10, start=False, status="Resolving")
     for _ in range(10):
         progress.update(sub_task, advance=1, status="Resolving")
@@ -53,14 +136,35 @@ def simulate_task(console, task_name, max_duration=15):
             time.sleep(duration / steps)
 
             if random.random() < 0.3:
-                sub_task_name = "Adjusting parameters" if random.random() < 0.5 else "Error resolution"
-                subtask_progress = simulate_resolution_progress(progress, task_name, sub_task_name)
+                error_warning_choice = random.choice(["error", "warning"])
+                messages = task_specific_messages[task_name][error_warning_choice + "s"]
+                message = random.choice(messages)
+                resolution_message = "Adjusting parameters" if error_warning_choice == "warning" else "Error resolution"
+                
+                subtask_progress = simulate_resolution_progress(progress, task_name, resolution_message, message)
                 progress.update(main_task, completed=min(100, progress.tasks[main_task].completed + subtask_progress // 2), status="Running")
 
         # Ensure the task reaches 100% completion
         progress.update(main_task, completed=100, status="Completed")
 
+def simulate_process_monitoring(console, num_processes=5):
+    """Simulates a process monitoring display similar to htop."""
+    table = Table(title="Process Monitoring", style="bold blue")
+    table.add_column("PID", style="dim", width=6)
+    table.add_column("User")
+    table.add_column("CPU%", justify="right")
+    table.add_column("MEM%", justify="right")
+    table.add_column("Command")
 
+    for _ in range(num_processes):
+        pid = str(random.randint(1000, 50000))
+        user = random.choice(["root", "user1", "user2", "daemon"])
+        cpu_usage = f"{random.uniform(0.1, 30.0):.1f}"
+        mem_usage = f"{random.uniform(0.1, 50.0):.1f}"
+        command = random.choice(["python", "bash", "htop", "curl", "ssh"])
+        table.add_row(pid, user, cpu_usage, mem_usage, command)
+
+    console.print(table)
 
 def display_system_info(console):
     """Displays a mock system information table."""
