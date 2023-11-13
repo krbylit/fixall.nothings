@@ -24,10 +24,21 @@ def simulate_process_monitoring(console, num_processes=5):
 
     console.print(table)
 
+def simulate_resolution_progress(progress, task_name, sub_task_name, duration=2):
+    """Simulates a sub-task resolution with a progress bar."""
+    sub_task = progress.add_task(sub_task_name, total=10, start=False, status="Resolving")
+    for _ in range(10):
+        progress.update(sub_task, advance=1, status="Resolving")
+        time.sleep(duration / 10)
+    progress.console.log(f"[bold green]Resolution for {task_name}: {sub_task_name} completed.")
+    return 10  # Return the progress made in this sub-task
+
 def simulate_task(console, task_name, max_duration=15):
     """Simulates a task with a progress bar and random logs."""
     duration = random.uniform(2, max_duration)
     steps = int(duration * 10)
+    main_task_increment = steps // 2  # Reserve half progress for sub-tasks
+
     with Progress(
         "[progress.description]{task.description}",
         BarColumn(bar_width=None),
@@ -35,20 +46,21 @@ def simulate_task(console, task_name, max_duration=15):
         TextColumn("[bold green]{task.fields[status]}"),
         console=console
     ) as progress:
-        task = progress.add_task(task_name, total=100, status="Running")
-        for step in range(steps):
-            progress.update(task, advance=10, status="Running")
+        main_task = progress.add_task(task_name, total=100, status="Running")
+
+        for step in range(main_task_increment):
+            progress.update(main_task, advance=1, status="Running")
             time.sleep(duration / steps)
-            if random.random() < 0.3:  # 30% chance to log a message
-                if random.random() < 0.5:
-                    console.log(f"[yellow]Warning in {task_name}: Unexpected event detected.")
-                    time.sleep(1)
-                    console.log(f"[yellow]Resolution: Adjusted parameters, continuing process.")
-                else:
-                    console.log(f"[red]Error in {task_name}: Faulty operation at step {step}.")
-                    time.sleep(1)
-                    console.log(f"[green]Resolution: Error resolved, operation back on track.")
-        progress.update(task, status="Completed")
+
+            if random.random() < 0.3:
+                sub_task_name = "Adjusting parameters" if random.random() < 0.5 else "Error resolution"
+                subtask_progress = simulate_resolution_progress(progress, task_name, sub_task_name)
+                progress.update(main_task, completed=min(100, progress.tasks[main_task].completed + subtask_progress // 2), status="Running")
+
+        # Ensure the task reaches 100% completion
+        progress.update(main_task, completed=100, status="Completed")
+
+
 
 def display_system_info(console):
     """Displays a mock system information table."""
