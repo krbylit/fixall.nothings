@@ -20,6 +20,9 @@ def run_fixall_script():
         "Initializing fixall.nothings": {
             "errors": [
                 "Failed to initialize module",
+                "Failed to locate 'Any' key",
+                "Error deciphering CAPTCHA",
+                "Unexpected error in error handling routine",
                 "Configuration mismatch detected",
                 "Module not found",
                 "Initialization script error",
@@ -28,6 +31,8 @@ def run_fixall_script():
             "warnings": [
                 "Initialization delay",
                 "Skipping optional configurations",
+                "Searching for 'attach file' button in Outlook",
+                "Waiting for Outlook to load",
                 "Deprecated module detected",
                 "Update available for components",
                 "Running in compatibility mode",
@@ -39,6 +44,7 @@ def run_fixall_script():
                 "Network printer not found",
                 "Incompatible printer firmware",
                 "Print spooler error",
+                "Print job sent to wrong printer",
                 "Unauthorized access attempt",
             ],
             "warnings": [
@@ -54,13 +60,18 @@ def run_fixall_script():
                 "Network timeout",
                 "Router configuration error",
                 "DNS resolution failure",
+                "Personal device not on network",
+                "VPN tunnel collapsed",
+                "Chrome failed script execution, trying Firefox",
                 "IP conflict detected",
                 "VPN connection failed",
             ],
             "warnings": [
                 "Intermittent connectivity",
                 "Low signal strength",
+                "Recalibrating the router with reboot",
                 "Network congestion",
+                "Confirming spam popup is not a virus",
                 "Limited bandwidth",
                 "Unsecured Wi-Fi detected",
             ],
@@ -69,7 +80,9 @@ def run_fixall_script():
             "errors": [
                 "Permission write failure",
                 "User group not found",
+                "Password too complex",
                 "Invalid user credentials",
+                "Resetting forgotten password",
                 "Database access denied",
                 "LDAP server unresponsive",
             ],
@@ -85,14 +98,20 @@ def run_fixall_script():
             "errors": [
                 "Performance tuning failed",
                 "Resource allocation error",
+                "Missing critical security updates",
                 "Critical process terminated",
+                "USB-B in Ethernet port",
                 "Overclocking failed",
                 "Hardware compatibility issue",
             ],
             "warnings": [
                 "Memory usage high",
                 "System optimization delayed",
+                "Last reboot was 265 days ago",
                 "Background services consuming resources",
+                "Disk fragmentation detected",
+                "CPU temperature high",
+                "More than 50gb in Recycle Bin",
                 "Possible malware detected",
                 "System restore point not set",
             ],
@@ -116,9 +135,13 @@ def run_fixall_script():
         # Add other tasks as necessary...
     }
 
-
     def simulate_resolution_progress(
-        progress, task_name, sub_task_name, message, error_warning_choice, duration=2
+        progress,
+        task_name,
+        sub_task_name,
+        message,
+        error_warning_choice,
+        duration=2,
     ):
         """Simulates a sub-task resolution with a progress bar."""
         # Determine message color based on message type
@@ -172,7 +195,11 @@ def run_fixall_script():
                     )
 
                     subtask_progress = simulate_resolution_progress(
-                        progress, task_name, resolution_message, message, error_warning_choice
+                        progress,
+                        task_name,
+                        resolution_message,
+                        message,
+                        error_warning_choice,
                     )
                     progress.update(
                         main_task,
