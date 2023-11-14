@@ -6,6 +6,7 @@ import venv
 import signal
 import platform
 
+
 def run_fixall_script():
     import random
     import time
@@ -18,111 +19,123 @@ def run_fixall_script():
     task_specific_messages = {
         "Initializing fixall.nothings": {
             "errors": [
-                "Failed to initialize module", 
-                "Configuration mismatch detected", 
+                "Failed to initialize module",
+                "Configuration mismatch detected",
                 "Module not found",
-                "Initialization script error", 
-                "Missing essential files"
+                "Initialization script error",
+                "Missing essential files",
             ],
             "warnings": [
-                "Initialization delay", 
+                "Initialization delay",
                 "Skipping optional configurations",
                 "Deprecated module detected",
                 "Update available for components",
-                "Running in compatibility mode"
-            ]
+                "Running in compatibility mode",
+            ],
         },
         "Fixing printers": {
             "errors": [
-                "Printer driver conflict", 
+                "Printer driver conflict",
                 "Network printer not found",
-                "Incompatible printer firmware", 
-                "Print spooler error", 
-                "Unauthorized access attempt"
+                "Incompatible printer firmware",
+                "Print spooler error",
+                "Unauthorized access attempt",
             ],
             "warnings": [
-                "Low ink warning", 
+                "Low ink warning",
                 "Paper jam detected",
                 "Printer offline",
                 "Maintenance required",
-                "High print queue"
-            ]
+                "High print queue",
+            ],
         },
         "Resolving network issues": {
             "errors": [
-                "Network timeout", 
+                "Network timeout",
                 "Router configuration error",
-                "DNS resolution failure", 
-                "IP conflict detected", 
-                "VPN connection failed"
+                "DNS resolution failure",
+                "IP conflict detected",
+                "VPN connection failed",
             ],
             "warnings": [
-                "Intermittent connectivity", 
+                "Intermittent connectivity",
                 "Low signal strength",
                 "Network congestion",
                 "Limited bandwidth",
-                "Unsecured Wi-Fi detected"
-            ]
+                "Unsecured Wi-Fi detected",
+            ],
         },
         "Updating user permissions": {
             "errors": [
-                "Permission write failure", 
+                "Permission write failure",
                 "User group not found",
-                "Invalid user credentials", 
-                "Database access denied", 
-                "LDAP server unresponsive"
+                "Invalid user credentials",
+                "Database access denied",
+                "LDAP server unresponsive",
             ],
             "warnings": [
-                "Incomplete user data", 
+                "Incomplete user data",
                 "Redundant permission settings",
                 "Password expiration approaching",
                 "Account inactivity warning",
-                "Excessive login attempts"
-            ]
+                "Excessive login attempts",
+            ],
         },
         "Optimizing system performance": {
             "errors": [
-                "Performance tuning failed", 
+                "Performance tuning failed",
                 "Resource allocation error",
-                "Critical process terminated", 
-                "Overclocking failed", 
-                "Hardware compatibility issue"
+                "Critical process terminated",
+                "Overclocking failed",
+                "Hardware compatibility issue",
             ],
             "warnings": [
-                "Memory usage high", 
+                "Memory usage high",
                 "System optimization delayed",
                 "Background services consuming resources",
                 "Possible malware detected",
-                "System restore point not set"
-            ]
+                "System restore point not set",
+            ],
         },
         "Finalizing fixes": {
             "errors": [
-                "Finalization script missing", 
+                "Finalization script missing",
                 "Insufficient privileges for finalization",
-                "System lockdown in progress", 
-                "Critical error on shutdown", 
-                "License verification failed"
+                "System lockdown in progress",
+                "Critical error on shutdown",
+                "License verification failed",
             ],
             "warnings": [
-                "Extended finalization time", 
+                "Extended finalization time",
                 "Skipping non-critical steps",
                 "Temporary files not cleaned up",
                 "Registry modifications pending",
-                "Pending system reboot"
-            ]
+                "Pending system reboot",
+            ],
         }
         # Add other tasks as necessary...
     }
 
-    def simulate_resolution_progress(progress, task_name, sub_task_name, message, duration=2):
+
+    def simulate_resolution_progress(
+        progress, task_name, sub_task_name, message, error_warning_choice, duration=2
+    ):
         """Simulates a sub-task resolution with a progress bar."""
-        progress.console.log(f"[yellow]{message}")
-        sub_task = progress.add_task(sub_task_name, total=10, start=False, status="Resolving")
+        # Determine message color based on message type
+        message_color = "red" if error_warning_choice == "error" else "yellow"
+
+        # Log the message with appropriate color
+        progress.console.log(f"[{message_color}]{message}")
+
+        sub_task = progress.add_task(
+            sub_task_name, total=10, start=False, status="Resolving"
+        )
         for _ in range(10):
             progress.update(sub_task, advance=1, status="Resolving")
             time.sleep(duration / 10)
-        progress.console.log(f"[bold green]Resolution for {task_name}: {sub_task_name} completed.")
+        progress.console.log(
+            f"[bold green]Resolution for {task_name}: {sub_task_name} completed."
+        )
         return 10  # Return the progress made in this sub-task
 
     def simulate_task(console, task_name, max_duration=15):
@@ -136,9 +149,11 @@ def run_fixall_script():
             BarColumn(bar_width=None),
             "[progress.percentage]{task.percentage:>3.0f}%",
             TextColumn("[bold green]{task.fields[status]}"),
-            console=console
+            console=console,
         ) as progress:
-            main_task = progress.add_task(task_name, total=100, status="Running")
+            main_task = progress.add_task(
+                task_name, total=100, status="Running"
+            )
 
             for step in range(main_task_increment):
                 progress.update(main_task, advance=1, status="Running")
@@ -146,12 +161,28 @@ def run_fixall_script():
 
                 if random.random() < 0.3:
                     error_warning_choice = random.choice(["error", "warning"])
-                    messages = task_specific_messages[task_name][error_warning_choice + "s"]
+                    messages = task_specific_messages[task_name][
+                        error_warning_choice + "s"
+                    ]
                     message = random.choice(messages)
-                    resolution_message = "Adjusting parameters" if error_warning_choice == "warning" else "Error resolution"
-                    
-                    subtask_progress = simulate_resolution_progress(progress, task_name, resolution_message, message)
-                    progress.update(main_task, completed=min(100, progress.tasks[main_task].completed + subtask_progress // 2), status="Running")
+                    resolution_message = (
+                        "Adjusting parameters"
+                        if error_warning_choice == "warning"
+                        else "Error resolution"
+                    )
+
+                    subtask_progress = simulate_resolution_progress(
+                        progress, task_name, resolution_message, message, error_warning_choice
+                    )
+                    progress.update(
+                        main_task,
+                        completed=min(
+                            100,
+                            progress.tasks[main_task].completed
+                            + subtask_progress // 2,
+                        ),
+                        status="Running",
+                    )
 
             # Ensure the task reaches 100% completion
             progress.update(main_task, completed=100, status="Completed")
@@ -185,7 +216,12 @@ def run_fixall_script():
 
         components = ["CPU", "Memory", "Disk", "Network"]
         statuses = ["Operational", "Optimized", "Stable", "Active"]
-        details = ["No issues", "Performance enhanced", "No fragmentation", "No packet loss"]
+        details = [
+            "No issues",
+            "Performance enhanced",
+            "No fragmentation",
+            "No packet loss",
+        ]
 
         for component, status, detail in zip(components, statuses, details):
             table.add_row(component, status, detail)
@@ -202,32 +238,47 @@ def run_fixall_script():
             "Resolving network issues",
             "Updating user permissions",
             "Optimizing system performance",
-            "Finalizing fixes"
+            "Finalizing fixes",
         ]
 
         for task in tasks:
-            console.print(Panel(f"[bold yellow]Starting: {task}[/bold yellow]", expand=False))
+            console.print(
+                Panel(
+                    f"[bold yellow]Starting: {task}[/bold yellow]", expand=False
+                )
+            )
             simulate_task(console, task)
             simulate_process_monitoring(console)
-            console.print(Panel(f"[bold green]Completed: {task}[/bold green]\n", expand=False))
+            console.print(
+                Panel(
+                    f"[bold green]Completed: {task}[/bold green]\n",
+                    expand=False,
+                )
+            )
 
-        console.print("[bold magenta]All tasks completed! System is now optimized![/bold magenta]", justify="center")
+        console.print(
+            "[bold magenta]All tasks completed! System is now optimized![/bold magenta]",
+            justify="center",
+        )
 
     if __name__ == "__main__":
         main()
     pass
 
+
 def cleanup(temp_dir):
     print("Cleaning up...")
     if platform.system() == "Windows":
-        subprocess.check_call(['rmdir', '/S', '/Q', temp_dir], shell=True)
+        subprocess.check_call(["rmdir", "/S", "/Q", temp_dir], shell=True)
     else:
-        subprocess.check_call(['rm', '-rf', temp_dir])
+        subprocess.check_call(["rm", "-rf", temp_dir])
     print("Cleanup completed. Exiting.")
+
 
 def on_interrupt(signum, frame, temp_dir):
     cleanup(temp_dir)
     sys.exit(1)
+
 
 def main():
     # Create a temporary directory for the virtual environment
@@ -235,17 +286,24 @@ def main():
     print(f"Creating a virtual environment in {temp_dir}")
 
     # Set up interrupt handler
-    signal.signal(signal.SIGINT, lambda signum, frame: on_interrupt(signum, frame, temp_dir))
+    signal.signal(
+        signal.SIGINT,
+        lambda signum, frame: on_interrupt(signum, frame, temp_dir),
+    )
 
     # Create a virtual environment
     venv.create(temp_dir, with_pip=True)
 
     # Path to the virtual environment's Python interpreter
-    venv_python = os.path.join(temp_dir, 'bin', 'python') if platform.system() != "Windows" else os.path.join(temp_dir, 'Scripts', 'python.exe')
+    venv_python = (
+        os.path.join(temp_dir, "bin", "python")
+        if platform.system() != "Windows"
+        else os.path.join(temp_dir, "Scripts", "python.exe")
+    )
 
     # Install required packages
     print("Installing dependencies for fixall.nothings...")
-    subprocess.check_call([venv_python, '-m', 'pip', 'install', 'rich'])
+    subprocess.check_call([venv_python, "-m", "pip", "install", "rich"])
 
     # Run the fixall script
     print("Running fixall.nothings...")
@@ -256,6 +314,6 @@ def main():
     finally:
         cleanup(temp_dir)
 
-if __name__ == '__main__':
-    main()
 
+if __name__ == "__main__":
+    main()
