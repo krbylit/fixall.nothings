@@ -151,7 +151,7 @@ def run_fixall_script():
         progress.console.log(f"[{message_color}]{message}")
 
         sub_task = progress.add_task(
-            sub_task_name, total=10, start=False, status="Resolving"
+            sub_task_name, total=10, status="Resolving"
         )
         for _ in range(10):
             progress.update(sub_task, advance=1, status="Resolving")
@@ -274,8 +274,8 @@ def run_fixall_script():
                     f"[bold yellow]Starting: {task}[/bold yellow]", expand=False
                 )
             )
-            simulate_task(console, task)
             simulate_process_monitoring(console)
+            simulate_task(console, task)
             console.print(
                 Panel(
                     f"[bold green]Completed: {task}[/bold green]\n",
